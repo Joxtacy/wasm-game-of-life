@@ -62,21 +62,29 @@ impl Universe {
     }
 }
 
+fn generate_cells_static(i: u32) -> Cell {
+    if i % 2 == 0 || i % 7 == 0 {
+        Cell::Alive
+    } else {
+        Cell::Dead
+    }
+}
+
+fn generate_cells_random(_i: u32) -> Cell {
+    if js_sys::Math::random() < 0.5 {
+        Cell::Alive
+    } else {
+        Cell::Dead
+    }
+}
+
 #[wasm_bindgen]
 impl Universe {
     pub fn new() -> Universe {
         let width = 64;
         let height = 64;
 
-        let cells = (0..width * height)
-            .map(|i| {
-                if i % 2 == 0 || i % 7 == 0 {
-                    Cell::Alive
-                } else {
-                    Cell::Dead
-                }
-            })
-            .collect();
+        let cells = (0..width * height).map(generate_cells_static).collect();
 
         Universe {
             width,
@@ -89,15 +97,7 @@ impl Universe {
         let height = 64;
         let width = 64;
 
-        let cells = (0..width * height)
-            .map(|_| {
-                if js_sys::Math::random() < 0.5 {
-                    Cell::Alive
-                } else {
-                    Cell::Dead
-                }
-            })
-            .collect();
+        let cells = (0..width * height).map(generate_cells_random).collect();
 
         Universe {
             width,
