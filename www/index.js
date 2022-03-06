@@ -20,6 +20,10 @@ canvas.width = (CELL_SIZE + 1) * width + 1;
 
 const ctx = canvas.getContext("2d");
 
+const genCounter = document.getElementById("gen-counter");
+let generation = 1;
+genCounter.innerText = generation;
+
 const drawGrid = () => {
     ctx.beginPath();
     ctx.strokeStyle = GRID_COLOR;
@@ -65,6 +69,8 @@ const drawCells = () => {
             );
         }
     }
+
+    genCounter.innerText = ++generation;
 
     ctx.stroke();
 }
