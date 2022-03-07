@@ -20,6 +20,24 @@ canvas.width = (CELL_SIZE + 1) * width + 1;
 
 const ctx = canvas.getContext("2d");
 
+canvas.addEventListener("click", event => {
+    const boundingRect = canvas.getBoundingClientRect();
+
+    const scaleX = canvas.width / boundingRect.width;
+    const scaleY = canvas.height / boundingRect.height;
+
+    const canvasLeft = (event.clientX - boundingRect.left) * scaleX;
+    const canvasTop = (event.clientY - boundingRect.top) * scaleY;
+
+    const row = Math.min(Math.floor(canvasTop / (CELL_SIZE + 1)), height - 1);
+    const col = Math.min(Math.floor(canvasLeft / (CELL_SIZE + 1)), width - 1);
+
+    universe.toggle_cell(row, col);
+
+    drawGrid();
+    drawCells();
+});
+
 const genCounter = document.getElementById("gen-counter");
 let generation = 1;
 genCounter.innerText = generation;
@@ -75,17 +93,44 @@ const drawCells = () => {
     ctx.stroke();
 }
 
+let animationId = null;
+
+const isPaused = () => animationId === null;
+
+// This function is the same as before, except the
+// result of `requestAnimationFrame` is assigned to
+// `animationId`.
 const renderLoop = () => {
     // debugger;
     universe.tick();
 
     drawGrid();
     drawCells();
-    requestAnimationFrame(renderLoop);
+    animationId = requestAnimationFrame(renderLoop);
 };
+
+const playPauseButton = document.getElementById("play-pause");
+
+const play = () => {
+    playPauseButton.textContent = "⏸";
+    renderLoop();
+};
+
+const pause = () => {
+    playPauseButton.textContent = "▶️";
+    cancelAnimationFrame(animationId);
+    animationId = null;
+};
+
+playPauseButton.addEventListener("click", _event => {
+    if (isPaused()) {
+        play();
+    } else {
+        pause();
+    }
+});
 
 drawGrid();
 drawCells();
-requestAnimationFrame(renderLoop);
-
+play();
 
