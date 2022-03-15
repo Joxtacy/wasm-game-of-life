@@ -64,6 +64,8 @@ const genCounter = document.getElementById("gen-counter");
 let generation = 1;
 genCounter.innerText = generation;
 
+const genSpeedInput = document.getElementById("gen-speed");
+
 const drawGrid = () => {
     ctx.beginPath();
     ctx.strokeStyle = GRID_COLOR;
@@ -122,7 +124,11 @@ const isPaused = () => animationId === null;
 // `animationId`.
 const renderLoop = () => {
     // debugger;
-    universe.tick();
+    const genSpeed = parseInt(genSpeedInput.value);
+    for (let i = 0; i < genSpeed; i++) {
+        universe.tick();
+        genCounter.innerText = ++generation;
+    }
 
     drawGrid();
     drawCells();
