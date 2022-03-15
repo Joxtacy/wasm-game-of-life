@@ -110,6 +110,10 @@ fn generate_cells_random(_i: u32) -> Cell {
     }
 }
 
+fn generate_cells_dead(_i: u32) -> Cell {
+    Cell::Dead
+}
+
 #[wasm_bindgen]
 impl Universe {
     pub fn new() -> Universe {
@@ -134,6 +138,21 @@ impl Universe {
         let width = 64;
 
         let cells = (0..width * height).map(generate_cells_random).collect();
+
+        Universe {
+            width,
+            height,
+            cells,
+        }
+    }
+
+    pub fn new_dead() -> Universe {
+        utils::set_panic_hook();
+
+        let height = 64;
+        let width = 64;
+
+        let cells = (0..width * height).map(generate_cells_dead).collect();
 
         Universe {
             width,
