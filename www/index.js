@@ -8,7 +8,7 @@ const DEAD_COLOR = "#FFFFFF";
 const ALIVE_COLOR = "#000000";
 
 // Construct the universe, and get its widht and height.
-const universe = Universe.new_random();
+let universe = Universe.new_random();
 const height = universe.height();
 const width = universe.width();
 
@@ -36,6 +36,28 @@ canvas.addEventListener("click", event => {
 
     drawGrid();
     drawCells();
+});
+
+const newRandomButton = document.getElementById("new-random");
+newRandomButton.addEventListener("click", event => {
+    universe = Universe.new_random();
+    generation = 1;
+    genCounter.innerText = generation;
+    if (isPaused()) {
+        drawGrid();
+        drawCells();
+    }
+});
+
+const newDeadButton = document.getElementById("new-dead");
+newDeadButton.addEventListener("click", event => {
+    universe = Universe.new_dead();
+    generation = 1;
+    genCounter.innerText = generation;
+    if (isPaused()) {
+        drawGrid();
+        drawCells();
+    }
 });
 
 const genCounter = document.getElementById("gen-counter");
@@ -87,8 +109,6 @@ const drawCells = () => {
             );
         }
     }
-
-    genCounter.innerText = ++generation;
 
     ctx.stroke();
 }
