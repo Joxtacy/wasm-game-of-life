@@ -50,16 +50,17 @@ const GRID_COLOR = "#CCCCCC";
 const DEAD_COLOR = "#FFFFFF";
 const ALIVE_COLOR = "#000000";
 
+const HEIGHT = 128;
+const WIDTH = 128;
+
 // Construct the universe, and get its widht and height.
-let universe = Universe.new_random();
-const height = universe.height();
-const width = universe.width();
+let universe = Universe.new_random(HEIGHT, WIDTH);
 
 // Give the canvas room for all of our cells and a 1px border
 // around each of them.
 const canvas = document.getElementById("game-of-life-canvas");
-canvas.height = (CELL_SIZE + 1) * height + 1;
-canvas.width = (CELL_SIZE + 1) * width + 1;
+canvas.height = (CELL_SIZE + 1) * HEIGHT + 1;
+canvas.width = (CELL_SIZE + 1) * WIDTH + 1;
 
 const ctx = canvas.getContext("2d");
 
@@ -75,8 +76,8 @@ canvas.addEventListener("click", event => {
     const canvasLeft = (event.clientX - boundingRect.left) * scaleX;
     const canvasTop = (event.clientY - boundingRect.top) * scaleY;
 
-    const row = Math.min(Math.floor(canvasTop / (CELL_SIZE + 1)), height - 1);
-    const col = Math.min(Math.floor(canvasLeft / (CELL_SIZE + 1)), width - 1);
+    const row = Math.min(Math.floor(canvasTop / (CELL_SIZE + 1)), HEIGHT - 1);
+    const col = Math.min(Math.floor(canvasLeft / (CELL_SIZE + 1)), WIDTH - 1);
 
     if (meta) {
         universe.insert_glider(row, col);
@@ -92,7 +93,7 @@ canvas.addEventListener("click", event => {
 
 const newRandomButton = document.getElementById("new-random");
 newRandomButton.addEventListener("click", () => {
-    universe = Universe.new_random();
+    universe = Universe.new_random(HEIGHT, WIDTH);
     generation = 1;
     genCounter.innerText = generation;
     if (isPaused()) {
@@ -103,7 +104,7 @@ newRandomButton.addEventListener("click", () => {
 
 const newDeadButton = document.getElementById("new-dead");
 newDeadButton.addEventListener("click", () => {
-    universe = Universe.new_dead();
+    universe = Universe.new_dead(HEIGHT, WIDTH);
     generation = 1;
     genCounter.innerText = generation;
     if (isPaused()) {
@@ -123,32 +124,32 @@ const drawGrid = () => {
     ctx.strokeStyle = GRID_COLOR;
 
     // Vertical lines.
-    for (let i = 0; i <= width; i++) {
+    for (let i = 0; i <= WIDTH; i++) {
         ctx.moveTo(i * (CELL_SIZE + 1) + 1, 0);
-        ctx.lineTo(i * (CELL_SIZE + 1) + 1, (CELL_SIZE + 1) * height + 1);
+        ctx.lineTo(i * (CELL_SIZE + 1) + 1, (CELL_SIZE + 1) * HEIGHT + 1);
     }
 
     // Horizontal lines.
-    for (let j = 0; j <= height; j++) {
+    for (let j = 0; j <= HEIGHT; j++) {
         ctx.moveTo(0,                           j * (CELL_SIZE + 1) + 1);
-        ctx.lineTo((CELL_SIZE + 1) * width + 1, j * (CELL_SIZE + 1) + 1);
+        ctx.lineTo((CELL_SIZE + 1) * WIDTH + 1, j * (CELL_SIZE + 1) + 1);
     }
 
     ctx.stroke();
 }
 
 const getIndex = (row, column) => {
-    return row * width + column;
+    return row * WIDTH + column;
 }
 
 const drawCells = () => {
     const cellsPtr = universe.cells();
-    const cells = new Uint8Array(memory.buffer, cellsPtr, width * height);
+    const cells = new Uint8Array(memory.buffer, cellsPtr, WIDTH * HEIGHT);
 
     ctx.beginPath();
 
-    for (let row = 0; row < height; row++) {
-        for (let col = 0; col < width; col++) {
+    for (let row = 0; row < HEIGHT; row++) {
+        for (let col = 0; col < WIDTH; col++) {
             const idx = getIndex(row, col);
 
             ctx.fillStyle = cells[idx] === Cell.Dead
