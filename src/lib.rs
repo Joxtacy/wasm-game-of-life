@@ -166,6 +166,88 @@ impl Universe {
         self.cells[idx].toggle();
     }
 
+    pub fn insert_glider(&mut self, row: u32, column: u32) {
+        let mut coords: Vec<(u32, u32)> = Vec::new();
+
+        coords.push((row - 1, column - 1));
+        coords.push((row, column));
+        coords.push((row, column + 1));
+        coords.push((row + 1, column - 1));
+        coords.push((row + 1, column));
+
+        coords = coords
+            .iter()
+            .map(|coord| (coord.0 % self.height, coord.1 % self.width))
+            .collect();
+        self.set_cells(&coords);
+    }
+
+    pub fn insert_pulsar(&mut self, row: u32, column: u32) {
+        let mut coords: Vec<(u32, u32)> = Vec::new();
+
+        coords.push((row - 6, column - 4));
+        coords.push((row - 6, column - 3));
+        coords.push((row - 6, column - 2));
+        coords.push((row - 6, column + 4));
+        coords.push((row - 6, column + 3));
+        coords.push((row - 6, column + 2));
+
+        coords.push((row + 6, column - 4));
+        coords.push((row + 6, column - 3));
+        coords.push((row + 6, column - 2));
+        coords.push((row + 6, column + 4));
+        coords.push((row + 6, column + 3));
+        coords.push((row + 6, column + 2));
+
+        coords.push((row - 1, column - 4));
+        coords.push((row - 1, column - 3));
+        coords.push((row - 1, column - 2));
+        coords.push((row - 1, column + 4));
+        coords.push((row - 1, column + 3));
+        coords.push((row - 1, column + 2));
+
+        coords.push((row + 1, column - 4));
+        coords.push((row + 1, column - 3));
+        coords.push((row + 1, column - 2));
+        coords.push((row + 1, column + 4));
+        coords.push((row + 1, column + 3));
+        coords.push((row + 1, column + 2));
+
+        coords.push((row - 4, column - 6));
+        coords.push((row - 3, column - 6));
+        coords.push((row - 2, column - 6));
+        coords.push((row + 4, column - 6));
+        coords.push((row + 3, column - 6));
+        coords.push((row + 2, column - 6));
+
+        coords.push((row - 4, column + 6));
+        coords.push((row - 3, column + 6));
+        coords.push((row - 2, column + 6));
+        coords.push((row + 4, column + 6));
+        coords.push((row + 3, column + 6));
+        coords.push((row + 2, column + 6));
+
+        coords.push((row - 4, column - 1));
+        coords.push((row - 3, column - 1));
+        coords.push((row - 2, column - 1));
+        coords.push((row + 4, column - 1));
+        coords.push((row + 3, column - 1));
+        coords.push((row + 2, column - 1));
+
+        coords.push((row - 4, column + 1));
+        coords.push((row - 3, column + 1));
+        coords.push((row - 2, column + 1));
+        coords.push((row + 4, column + 1));
+        coords.push((row + 3, column + 1));
+        coords.push((row + 2, column + 1));
+
+        coords = coords
+            .iter()
+            .map(|coord| (coord.0 % self.height, coord.1 % self.width))
+            .collect();
+        self.set_cells(&coords);
+    }
+
     pub fn width(&self) -> u32 {
         self.width
     }
