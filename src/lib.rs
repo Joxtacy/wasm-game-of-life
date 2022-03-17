@@ -132,11 +132,12 @@ fn generate_cells_dead(_i: u32) -> Cell {
 
 #[wasm_bindgen]
 impl Universe {
-    pub fn new() -> Universe {
+    pub fn new(height: u32, width: u32) -> Universe {
         // utils::set_panic_hook();
 
-        let width = 64;
-        let height = 64;
+        if height == 0 || width == 0 {
+            panic!("Cannot create universe with 0 size");
+        }
 
         let cells = (0..width * height).map(generate_cells_static).collect();
 
@@ -147,11 +148,12 @@ impl Universe {
         }
     }
 
-    pub fn new_random() -> Universe {
+    pub fn new_random(height: u32, width: u32) -> Universe {
         utils::set_panic_hook();
 
-        let height = 64;
-        let width = 64;
+        if height == 0 || width == 0 {
+            panic!("Cannot create universe with 0 size");
+        }
 
         let cells = (0..width * height).map(generate_cells_random).collect();
 
@@ -162,11 +164,12 @@ impl Universe {
         }
     }
 
-    pub fn new_dead() -> Universe {
+    pub fn new_dead(height: u32, width: u32) -> Universe {
         utils::set_panic_hook();
 
-        let height = 64;
-        let width = 64;
+        if height == 0 || width == 0 {
+            panic!("Cannot create universe with 0 size");
+        }
 
         let cells = (0..width * height).map(generate_cells_dead).collect();
 
