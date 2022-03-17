@@ -21,6 +21,9 @@ canvas.width = (CELL_SIZE + 1) * width + 1;
 const ctx = canvas.getContext("2d");
 
 canvas.addEventListener("click", event => {
+    const meta = event.metaKey;
+    const shift = event.shiftKey;
+
     const boundingRect = canvas.getBoundingClientRect();
 
     const scaleX = canvas.width / boundingRect.width;
@@ -32,7 +35,13 @@ canvas.addEventListener("click", event => {
     const row = Math.min(Math.floor(canvasTop / (CELL_SIZE + 1)), height - 1);
     const col = Math.min(Math.floor(canvasLeft / (CELL_SIZE + 1)), width - 1);
 
-    universe.toggle_cell(row, col);
+    if (meta) {
+        universe.insert_glider(row, col);
+    } else if (shift) {
+        universe.insert_pulsar(row, col);
+    } else {
+        universe.toggle_cell(row, col);
+    }
 
     drawGrid();
     drawCells();
