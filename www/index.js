@@ -48,7 +48,7 @@ canvas.addEventListener("click", event => {
 });
 
 const newRandomButton = document.getElementById("new-random");
-newRandomButton.addEventListener("click", event => {
+newRandomButton.addEventListener("click", () => {
     universe = Universe.new_random();
     generation = 1;
     genCounter.innerText = generation;
@@ -59,7 +59,7 @@ newRandomButton.addEventListener("click", event => {
 });
 
 const newDeadButton = document.getElementById("new-dead");
-newDeadButton.addEventListener("click", event => {
+newDeadButton.addEventListener("click", () => {
     universe = Universe.new_dead();
     generation = 1;
     genCounter.innerText = generation;
