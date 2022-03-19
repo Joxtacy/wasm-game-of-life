@@ -57,6 +57,7 @@ pub struct Universe {
     width: u32,
     height: u32,
     cells: Vec<Cell>,
+    buffer_cells: Vec<Cell>,
 }
 
 impl fmt::Display for Universe {
@@ -98,28 +99,28 @@ impl Universe {
         };
 
         let nw = self.get_index(north, west);
-        count += self.cells[nw] as u8;
+        count += self.buffer_cells[nw] as u8;
 
         let n = self.get_index(north, column);
-        count += self.cells[n] as u8;
+        count += self.buffer_cells[n] as u8;
 
         let ne = self.get_index(north, east);
-        count += self.cells[ne] as u8;
+        count += self.buffer_cells[ne] as u8;
 
         let w = self.get_index(row, west);
-        count += self.cells[w] as u8;
+        count += self.buffer_cells[w] as u8;
 
         let e = self.get_index(row, east);
-        count += self.cells[e] as u8;
+        count += self.buffer_cells[e] as u8;
 
         let sw = self.get_index(south, west);
-        count += self.cells[sw] as u8;
+        count += self.buffer_cells[sw] as u8;
 
         let s = self.get_index(south, column);
-        count += self.cells[s] as u8;
+        count += self.buffer_cells[s] as u8;
 
         let se = self.get_index(south, east);
-        count += self.cells[se] as u8;
+        count += self.buffer_cells[se] as u8;
 
         count
     }
@@ -135,6 +136,7 @@ impl Universe {
         for (row, col) in cells.iter().cloned() {
             let idx = self.get_index(row, col);
             self.cells[idx] = Cell::Alive;
+            self.buffer_cells[idx] = Cell::Alive;
         }
     }
 }
@@ -168,12 +170,14 @@ impl Universe {
             panic!("Cannot create universe with 0 size");
         }
 
-        let cells = (0..width * height).map(generate_cells_static).collect();
+        let cells: Vec<Cell> = (0..width * height).map(generate_cells_static).collect();
+        let buffer_cells = cells.clone();
 
         Universe {
             width,
             height,
             cells,
+            buffer_cells,
         }
     }
 
@@ -184,12 +188,14 @@ impl Universe {
             panic!("Cannot create universe with 0 size");
         }
 
-        let cells = (0..width * height).map(generate_cells_random).collect();
+        let cells: Vec<Cell> = (0..width * height).map(generate_cells_random).collect();
+        let buffer_cells = cells.clone();
 
         Universe {
             width,
             height,
             cells,
+            buffer_cells,
         }
     }
 
@@ -200,12 +206,14 @@ impl Universe {
             panic!("Cannot create universe with 0 size");
         }
 
-        let cells = (0..width * height).map(generate_cells_dead).collect();
+        let cells: Vec<Cell> = (0..width * height).map(generate_cells_dead).collect();
+        let buffer_cells = cells.clone();
 
         Universe {
             width,
             height,
             cells,
+            buffer_cells,
         }
     }
 
@@ -331,10 +339,6 @@ impl Universe {
     pub fn tick(&mut self) {
         let _timer = Timer::new("Universe::tick");
 
-        let mut next = {
-            let _timer = Timer::new("allocate new cells");
-            self.cells.clone()
-        };
 
         {
             let _timer = Timer::new("new generation");
@@ -342,7 +346,7 @@ impl Universe {
             for row in 0..self.height {
                 for col in 0..self.width {
                     let idx = self.get_index(row, col);
-                    let cell = self.cells[idx];
+                    let cell = self.buffer_cells[idx];
                     let live_neighbors = self.live_neighbor_count(row, col);
 
                     /*
@@ -374,12 +378,23 @@ impl Universe {
 
                     // log!("    it becomes {:?}", next_cell);
 
-                    next[idx] = next_cell;
+                    self.cells[idx] = next_cell;
+                }
+            }
+
+            for row in 0..self.height {
+                for col in 0..self.width {
+                    let idx = self.get_index(row, col);
+                    let cell = self.cells[idx];
+                    let next_cell = match cell {
+                        Cell::Alive => Cell::Alive,
+                        Cell::Dead => Cell::Dead,
+                    };
+                    self.buffer_cells[idx] = next_cell;
                 }
             }
         }
 
         let _timer = Timer::new("free old cells");
-        self.cells = next;
     }
 }
